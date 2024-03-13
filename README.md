@@ -1,11 +1,7 @@
 # Funny platformer
 2D platformer about TF2 characters (scout & heavy there)
 
-Entry point location: ```Assets/Source/Code/Runtime/Infrastructure/Bootstrapper/LevelBootstrapper.cs```
-
-## Idea of monobehaviour architecture
-The point of monobehaviour architecture is that the game designer will assemble the components by himself.
-F.i. Enemy is going to move via physics movement - game designer put ```PhysicsMovement``` component
+Entry point location: ```Assets/Source/Code/Runtime/Core/Bootstrapper/Bootstrapper.cs```
 
 ### __Third party:__
    + VContainer
@@ -18,6 +14,6 @@ F.i. Enemy is going to move via physics movement - game designer put ```PhysicsM
     - Observer
     - Finate state machine
     - Dependency injection
-    - MVC
+    - MV
     - Template method
     - Strategy
