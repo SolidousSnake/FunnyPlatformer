@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06f071f8110127042ac177bd8a10fb3c, type: 3}
+  m_Name: HeavyQuotes_Attack
+  m_EditorClassIdentifier: 
+  _quotes:
+  - {fileID: 8300000, guid: ac76cf1794b627c439d1a6e230e5b4a9, type: 3}
+  - {fileID: 8300000, guid: 42e19e83847592e4caf73d8602a881aa, type: 3}
+  - {fileID: 8300000, guid: 88526427a3f86d345afe6e0a0a3d66c4, type: 3}
+  - {fileID: 8300000, guid: 41491b5545b6d214fbbd6cf54d887763, type: 3}
