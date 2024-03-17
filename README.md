@@ -17,3 +17,4 @@ Entry point location: ```Assets/Source/Code/Runtime/Core/Bootstrapper/Bootstrapp
     - MV
     - Template method
     - Strategy
+    - Facade
