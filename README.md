@@ -6,9 +6,11 @@ Entry point location: ```Assets/Source/Code/Runtime/Core/Bootstrapper/Bootstrapp
 ### __Third party:__
    + VContainer
    + UniTask
+   + NightPool
    + Interfaces wrapper https://github.com/Thundernerd/Unity3D-SerializableInterface 
    + Scriptable objects
    + TextMeshPro
+   + Particle system
      
 ### ____Patterns:____ 
     - Observer
@@ -18,3 +20,4 @@ Entry point location: ```Assets/Source/Code/Runtime/Core/Bootstrapper/Bootstrapp
     - Template method
     - Strategy
     - Facade
+    - Object pool
