@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Source.Code.Runtime.Triggers;
+using UnityEngine;
 
 namespace Source.Code.Runtime.Unit.Mover
 {
@@ -6,19 +7,24 @@ namespace Source.Code.Runtime.Unit.Mover
     {
          private readonly Rigidbody2D _rigidBody;
          private readonly float _movementSpeed;
-
-        public PhysicsMovement(Rigidbody2D rigidBody, float movementSpeed)
+         private readonly SurroundingsTrigger _wallTrigger;
+         
+        public PhysicsMovement(Rigidbody2D rigidBody, float movementSpeed, SurroundingsTrigger wallTrigger)
         {
             _rigidBody = rigidBody;
             _movementSpeed = movementSpeed;
+            _wallTrigger = wallTrigger;
         }
         
-        public void Move(float axisValue)
+        public void Move(float direction)
         {
-            var scaledSpeed = _movementSpeed * axisValue;
-            var movementVector = new Vector2(scaledSpeed, _rigidBody.velocity.y);
+            if (_wallTrigger.Triggered())
+                return;
             
-            _rigidBody.velocity = movementVector;
+            var scaledSpeed = _movementSpeed * direction;
+            var movementVector = new Vector2(scaledSpeed, _rigidBody.velocity.y);
+
+           _rigidBody.velocity = movementVector;
         }
 
         public void ResetVelocity()

@@ -1,17 +1,26 @@
-using Source.Code.Runtime.Core.Interfaces;
+using Source.Code.Runtime.Core.SceneManagement;
+using Source.Code.Runtime.Core.Utils;
+using UnityEngine;
 
 namespace Source.Code.Runtime.Core.States
 {
-    public class RestartState : IState
+    public sealed class RestartState : IState
     {
+        private readonly ISceneLoader _sceneLoader;
+
+        public RestartState(ISceneLoader sceneLoader)
+        {
+            _sceneLoader = sceneLoader;
+        }
+        
         public void Enter()
         {
-            throw new System.NotImplementedException();
+            _sceneLoader.LoadScene(Constants.Scene.Game);
         }
 
         public void Exit()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("Scene has been restarted");
         }
     }
 }

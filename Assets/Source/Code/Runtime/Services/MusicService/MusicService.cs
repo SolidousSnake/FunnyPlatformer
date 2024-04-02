@@ -17,6 +17,8 @@ namespace Source.Code.Runtime.Services.MusicService
             _source = source;
             _clipQueue = new Queue<AudioClip>();
             _cts = new CancellationTokenSource();
+
+            Reset();
         }
 
         public void EnqueueClip(AudioClip clip)
@@ -63,6 +65,14 @@ namespace Source.Code.Runtime.Services.MusicService
         public void Dispose()
         {
             _cts.Cancel();
+            Stop();
+            Reset();
+        }
+
+        private void Reset()
+        {
+            _source.clip = null;
+            _source.loop = false;
         }
     }
 }

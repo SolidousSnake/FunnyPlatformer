@@ -21,7 +21,7 @@ namespace Source.Code.Runtime.Triggers
         {
             if(collision.gameObject.layer == _targetLayer) 
             {
-                _stateMachine.SetState<VictoryState>();
+                _stateMachine.Enter<VictoryState>();
             }
         }
     }

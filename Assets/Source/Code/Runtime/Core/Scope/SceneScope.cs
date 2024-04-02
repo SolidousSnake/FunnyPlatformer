@@ -1,7 +1,6 @@
 ﻿using NaughtyAttributes;
-using NTC.Pool;
 using Source.Code.Runtime.Config;
-using Source.Code.Runtime.Core.Interfaces;
+using Source.Code.Runtime.Core.Bootstrapper;
 using Source.Code.Runtime.Core.States;
 using Source.Code.Runtime.Core.States.View;
 using Source.Code.Runtime.MV.Health;
@@ -25,9 +24,9 @@ namespace Source.Code.Runtime.Core.Scope
         [Foldout("UI")]
         [SerializeField] private TimerView _timerView;
         [Foldout("UI")] 
-        [SerializeField] private ResultView _victoryView;
-        [Foldout("UI")] 
-        [SerializeField] private ResultView _failureView;
+        [SerializeField] private VictoryStateView _victoryStateView;
+        [Foldout("UI")]
+        [SerializeField] private BaseStateView _failureStateView;
         [Foldout("UI")] 
         [SerializeField] private PauseStateView _pauseStateView;
         [Foldout("UI")]
@@ -41,7 +40,7 @@ namespace Source.Code.Runtime.Core.Scope
         [Foldout("Player")] 
         [SerializeField]  private PlayerConfig _playerConfig;
         [Foldout("Player")] 
-        [SerializeField] private PlayerUnit _playerPrefab;
+        [SerializeField] private PlayerFacade _playerPrefab;
         [Foldout("Player")] 
         [SerializeField] private Vector3 _spawnPoint;
 
@@ -49,32 +48,29 @@ namespace Source.Code.Runtime.Core.Scope
         [SerializeField] private AudioSource _audioSource;
         [Foldout("SFX")]
         [SerializeField] private AudioClipConfig _audioClipConfig;
-
-        [SerializeField] private PoolsPreset _poolsPreset;
-
+        
         protected override void Configure(IContainerBuilder builder)
         {
             BindConfig(builder);
             BindUI(builder);
             BindServices(builder);
-            BindStateMachine(builder);
             BindTimer(builder);
             BindPlayer(builder);
+            BindStateMachine(builder);
 
-            builder.RegisterInstance(_poolsPreset);
-            builder.RegisterEntryPoint<Bootstrapper.Bootstrapper>();
+            builder.RegisterEntryPoint<LevelBootstrapper>();
         }
         
         private void BindStateMachine(IContainerBuilder builder)
         {
             builder.Register<GameStateMachine>(Lifetime.Singleton);
-            
-            builder.Register<IState, VictoryState>(Lifetime.Scoped).WithParameter(_victoryView);
-            builder.Register<IState, FailureState>(Lifetime.Scoped).WithParameter(_failureView);
-            // builder.Register<IState, PauseState>(Lifetime.Scoped).WithParameter(_pauseStateView);
+
+            builder.Register<IState, PreparingState>(Lifetime.Scoped);
+            builder.Register<IState, RestartState>(Lifetime.Scoped);
             builder.Register<IState, PlayingState>(Lifetime.Scoped).WithParameter(_playingStateView);
-            builder.Register<IState, PrepearingState>(Lifetime.Scoped);
-           //builder.Register<IState, RestartState>(Lifetime.Scoped);
+            builder.Register<IState, PauseState>(Lifetime.Scoped).WithParameter(_pauseStateView);
+            builder.Register<IState, VictoryState>(Lifetime.Scoped).WithParameter(_victoryStateView);
+            builder.Register<IState, FailureState>(Lifetime.Scoped).WithParameter(_failureStateView);
         }
 
         private void BindUI(IContainerBuilder builder)
@@ -85,17 +81,15 @@ namespace Source.Code.Runtime.Core.Scope
 
         private void BindPlayer(IContainerBuilder builder)
         {
-           /*
-            builder.Register(container =>
-            {
-                return container.Instantiate(_playerPrefab, _spawnPoint, Quaternion.identity);
-            }, Lifetime.Singleton);
-            */
+            builder.Register(container => 
+                container.Instantiate(_playerPrefab, _spawnPoint, Quaternion.identity), Lifetime.Singleton);
+            /*
            //NonLazy analog
            builder.RegisterBuildCallback(container =>
            {
                container.Instantiate(_playerPrefab, _spawnPoint, Quaternion.identity);
            });
+           */
         }
 
         private void BindServices(IContainerBuilder builder)
@@ -111,8 +105,6 @@ namespace Source.Code.Runtime.Core.Scope
             builder.RegisterInstance(_playerConfig);
             builder.RegisterInstance(_audioClipConfig);
         }
-
-       // private void BindCamera(IContainerBuilder builder) => 
 
         private void BindTimer(IContainerBuilder builder) =>
             builder.RegisterEntryPoint<Timer>().WithParameter(_timerView).AsSelf();

@@ -1,6 +1,6 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Source.Code.Runtime.Core.Data;
+using Source.Code.Runtime.Core.Utils;
 using UnityEngine;
 using VContainer.Unity;
 

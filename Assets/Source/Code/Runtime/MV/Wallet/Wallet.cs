@@ -4,27 +4,29 @@ namespace Source.Code.Runtime.MV.Wallet
 {
     public sealed class Wallet
     {
-        private int _coins;
-
-        public Wallet()
+        private readonly WalletView _walletView;
+        
+        public Wallet(WalletView walletView)
         {
-            _coins = 0;
+            Coins = 0;
+            _walletView = walletView;
         }
 
-        public Wallet(int startAmount)
+        public Wallet(WalletView walletView, int startAmount)
         {
-            _coins = startAmount;
+            Coins = startAmount;
+            _walletView = walletView;
         }
 
-        public event Action<int> CoinsAmountChanged;
+        public int Coins { get; private set; }
 
         public void AddCoin(int amount)
         {
             if (amount < 0)
                 throw new ArgumentException("amount less than zero");
             
-            _coins += amount;
-            CoinsAmountChanged?.Invoke(_coins);
+            Coins += amount;
+            _walletView.SetAmount(Coins);
         }
     }
 }

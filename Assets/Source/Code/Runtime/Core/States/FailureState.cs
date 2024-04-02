@@ -1,32 +1,42 @@
 using System;
-using Source.Code.Runtime.Core.Data;
+using Source.Code.Runtime.Config;
 using Source.Code.Runtime.Core.Enums;
-using Source.Code.Runtime.Core.Interfaces;
 using Source.Code.Runtime.Core.States.View;
+using Source.Code.Runtime.Services.MusicService;
+using Source.Code.Runtime.MV.Timer;
 using UnityEngine;
 
 namespace Source.Code.Runtime.Core.States
 {
     public sealed class FailureState : IState
     {
-        private readonly ResultView _resultView;
-        private readonly ISceneLoader _sceneLoader;
+        private readonly GameStateMachine _stateMachine;
+        private readonly MusicService _musicService;
+        private readonly AudioClip _failureClip;
+        private readonly BaseStateView _stateView;
+        private readonly Timer _timer;
         
-        public FailureState(ResultView resultView, ISceneLoader sceneLoader)
+        public FailureState(GameStateMachine stateMachine, BaseStateView stateView, MusicService musicService
+            , AudioClipConfig clipConfig, Timer timer)
         {
-            _resultView = resultView;
-            _sceneLoader = sceneLoader;
+            _stateMachine = stateMachine;
+            _stateView = stateView;
+            _musicService = musicService;
+            _failureClip = clipConfig.FailureClip;
+            _timer = timer;
         }
         
         public async void Enter()
         {
-            _resultView.gameObject.SetActive(true);
-            var result = await _resultView.Show();
+            _timer.Stop();
+            _musicService.PlaySpecificClip(_failureClip, false);
+            
+            var result = await _stateView.Show();
              
             switch (result)
             {
                 case TargetStates.Restart:
-                    _sceneLoader.LoadScene(Constants.Scene.Game);
+                    _stateMachine.Enter<RestartState>();
                     break;
                 case TargetStates.Quit:
                     Application.Quit();
@@ -35,10 +45,10 @@ namespace Source.Code.Runtime.Core.States
                     throw new ArgumentException("There is no result of that type");
             }
         }
-
+        
         public void Exit()
         {
-            
+            _stateView.Hide();
         }
     }
 }

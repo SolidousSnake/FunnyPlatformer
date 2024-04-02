@@ -1,3 +1,4 @@
+using Source.Code.Runtime.MV.Health;
 using UnityEngine;
 
 namespace Source.Code.Runtime.Triggers
@@ -8,9 +9,9 @@ namespace Source.Code.Runtime.Triggers
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.TryGetComponent(out Unit.Unit unit))
+            if (other.TryGetComponent(out Health health))
             {
-                unit.Health.ApplyDamage(_damage);
+                health.ApplyDamage(_damage);
             }
         }
     }

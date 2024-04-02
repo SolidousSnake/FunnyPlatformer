@@ -1,22 +1,18 @@
 using System;
 using System.Collections.Generic;
-using Source.Code.Runtime.Core.Interfaces;
+using UnityEngine;
 
 namespace Source.Code.Runtime.Core.States
 {
-    public abstract class StateMachine
+    public class StateMachine
     {
         private readonly Dictionary<Type, IState> _registeredStates;
         private IState _activeState;
+        private IUpdateableState _updateableState;
         
-        public StateMachine(IReadOnlyList<IState> states)
+        public StateMachine()
         {
             _registeredStates = new Dictionary<Type, IState>();
-
-            foreach (var state in states)
-            {
-                RegisterState(state);
-            }
         }
         
         public void RegisterState(IState state) 
@@ -24,19 +20,31 @@ namespace Source.Code.Runtime.Core.States
             _registeredStates.Add(state.GetType(), state);
         }
 
-        public void SetState<T>() where T : IState
+        public void Enter<T>() where T : class, IState
         {
-            var type = typeof(T);
-
-            if (_activeState != null && _activeState.GetType() == type)
-                return;
-
-            if(_registeredStates.TryGetValue(type, out var newState))
-            {
-                _activeState?.Exit();
-                _activeState = newState;
-                _activeState?.Enter();
-            }
+            IState state = ChangeState<T>();
+            state.Enter();
         }
+
+        private T ChangeState<T>() where T : class, IState
+        {
+            _activeState?.Exit();
+            T state = GetState<T>();
+            _activeState = state;
+
+            if (_activeState is IUpdateableState updateableState)
+                _updateableState = updateableState;
+            else
+                _updateableState = null;
+            
+            return state;
+        }
+
+        public void Update()
+        {
+            _updateableState?.Update();
+        }
+        
+        private T GetState<T>() where T : class, IState => _registeredStates[typeof(T)] as T;
     }
 }

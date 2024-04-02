@@ -1,17 +1,33 @@
+using Source.Code.Runtime.MV.Health;
 using UnityEngine;
 
-namespace Source.Code.Runtime.Interactable
+namespace Source.Code.Runtime.Interactables
 {
+    [RequireComponent(typeof(AudioSource))]
     public sealed class Dispenser : MonoBehaviour
     {
         [SerializeField] private float _healingValue;
+        [SerializeField] private AudioClip _healingClip;
+        [SerializeField] private AudioClip _idleClip;
+        [SerializeField] private AudioSource _audioSource;
+
+        private void OnValidate()
+        {
+            _audioSource ??= GetComponent<AudioSource>();
+        }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if(other.TryGetComponent(out Unit.Unit unit))
+            if (other.TryGetComponent(out Health health))
             {
-                unit.Health.ApplyHeal(_healingValue);
+                health.ApplyHeal(_healingValue);
+                _audioSource.PlayOneShot(_healingClip);
             }
+        }
+
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            _audioSource.PlayOneShot(_idleClip);
         }
     }
 }

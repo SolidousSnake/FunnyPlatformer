@@ -8,22 +8,9 @@ namespace Source.Code.Runtime.MV.Wallet
     {
         [SerializeField] private TextMeshProUGUI _coinLabel;
 
-        private Wallet _wallet;
-
-        public void Initialize(Wallet wallet)
-        {
-            _wallet = wallet;
-            _wallet.CoinsAmountChanged += SetAmount;
-        }
-
-        private void SetAmount(int amount)
+        public void SetAmount(int amount)
         {
             _coinLabel.text = $"{amount}";
-        }
-        
-        private void OnDestroy()
-        {
-            _wallet.CoinsAmountChanged -= SetAmount;
         }
     }
 }

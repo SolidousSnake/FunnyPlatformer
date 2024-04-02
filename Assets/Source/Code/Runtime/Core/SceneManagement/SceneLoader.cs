@@ -1,4 +1,3 @@
-using Source.Code.Runtime.Core.Interfaces;
 using UnityEngine.SceneManagement;
 
 namespace Source.Code.Runtime.Core.SceneManagement

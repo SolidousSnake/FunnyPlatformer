@@ -1,44 +1,43 @@
-﻿using Source.Code.Runtime.Core.Interfaces;
+﻿using System;
+using NTC.Pool;
+using Source.Code.Runtime.MV.Health;
 using UnityEngine;
 
 namespace Source.Code.Runtime.Weapon
 {
     [RequireComponent(typeof(Rigidbody2D))]    
-    public sealed class Projectile : MonoBehaviour
+    public sealed class Projectile : MonoBehaviour, IDespawnable
     {
         [SerializeField] private Rigidbody2D _rigidBody;
-        [SerializeField] private float _lifeTime;
 
         private float _damage;
-        private float _speed;
-
+        
         private void OnValidate()
         {
             _rigidBody ??= GetComponent<Rigidbody2D>();
         }
 
-        public void Initialize(float damage, float speed) 
+        public void Initialize(float damage, float speed, Vector2 direction) 
         {
             if(damage < 0)
-                throw new System.ArgumentException($"Projectile must have positive damage. Damage equals: {damage}");
+                throw new ArgumentException($"Projectile must have positive damage. Damage equals: {damage}");
 
-            _damage = damage;   
-            _speed = speed;
-            Destroy(gameObject, _lifeTime);
+            _damage = damage;
+
+            _rigidBody.velocity = speed * direction;
         }
 
-        private void Update()
+        private void OnCollisionEnter2D(Collision2D other)
         {
-            _rigidBody.velocity  = transform.right * _speed;
+            if (other.collider.TryGetComponent(out Health health))
+                health.ApplyDamage(_damage);
+         
+            NightPool.Despawn(gameObject);
         }
-
-        private void OnCollisionEnter2D(Collision2D collision)
+        
+        public void OnDespawn()
         {
-            if(collision.gameObject.TryGetComponent(out IDamageable damageable))
-            {
-                damageable.Health.ApplyDamage(_damage);
-            }
-            Destroy(gameObject);
+            _rigidBody.angularVelocity = 0;
         }
     }
 }

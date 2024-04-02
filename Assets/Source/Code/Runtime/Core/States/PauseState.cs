@@ -1,47 +1,54 @@
 using System;
 using Source.Code.Runtime.Core.Enums;
-using Source.Code.Runtime.Core.Interfaces;
 using Source.Code.Runtime.Core.States.View;
+using Source.Code.Runtime.Core.Utils;
+using Source.Code.Runtime.Services.InputService;
 using UnityEngine;
 
 namespace Source.Code.Runtime.Core.States
 {
     public sealed class PauseState : IState
     {
-        private readonly PauseStateView _stateView;
         private readonly GameStateMachine _stateMachine;
-        
-        public PauseState(PauseStateView stateView, GameStateMachine stateMachine)
+        private readonly PauseStateView _stateView;
+        private readonly IInputService _inputService;
+ 
+        public PauseState(GameStateMachine stateMachine, PauseStateView stateView, IInputService inputService)
         {
-            _stateView = stateView;
             _stateMachine = stateMachine;
+            _stateView = stateView;
+            _inputService = inputService;
         }
         
         public async void Enter()
         {
-            _stateView.gameObject.SetActive(true);
-            
+            Time.timeScale = Constants.Time.PausedValue;
+            _inputService.PauseButtonPressed += EnterPlayingState;
             var result = await _stateView.Show();
+             
             switch (result)
-            {             
+            {
                 case TargetStates.Resume:
-                    _stateMachine.SetState<PlayingState>();
-                    break;   
+                    EnterPlayingState();
+                    break;
                 case TargetStates.Restart:
-                    _stateMachine.SetState<RestartState>();
+                    _stateMachine.Enter<RestartState>();
                     break;
                 case TargetStates.Quit:
                     Application.Quit();
                     break;
                 default:
-                    throw new ArgumentException("Unknown result");
+                    throw new ArgumentException("There is no result of that type");
             }
-
         }
 
         public void Exit()
         {
-            _stateView.gameObject.SetActive(false);
+            Time.timeScale = Constants.Time.ResumedValue;
+            _stateView.Hide();
+            _inputService.PauseButtonPressed -= EnterPlayingState;
         }
+
+        private void EnterPlayingState() => _stateMachine.Enter<PlayingState>();
     }
 }
