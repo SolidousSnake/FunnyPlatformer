@@ -1,7 +1,7 @@
 # Funny platformer
 2D platformer about TF2 characters (scout & heavy there)
 
-Entry point location: ```Assets/Source/Code/Runtime/Core/Bootstrapper/Bootstrapper.cs```
+Entrypoint/Bootstrapper location: ```Assets/Source/Code/Runtime/Core/Bootstrapper/Bootstrapper.cs```
 
 ## Gameplay
 
