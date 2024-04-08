@@ -22,12 +22,16 @@ namespace Source.Code.Runtime.Interactables
             {
                 health.ApplyHeal(_healingValue);
                 _audioSource.PlayOneShot(_healingClip);
+                Debug.Log(other.name);
             }
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            _audioSource.PlayOneShot(_idleClip);
+            if (other.TryGetComponent(out Health _))
+            {
+                _audioSource.PlayOneShot(_idleClip);
+            }
         }
     }
 }
